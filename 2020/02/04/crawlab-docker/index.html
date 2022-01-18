@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="琉"><meta name="copyright" content="琉"><meta name="generator" content="Hexo 6.0.0"><meta name="theme" content="hexo-theme-yun"><title>Crawlab爬虫Docker部署流程 | 琉的小窝</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.2.2/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link id="light-prism-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@latest/themes/prism.css" media="(prefers-color-scheme: light)"><link id="dark-prism-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@latest/themes/prism-tomorrow.css" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="preload" href="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/css/hexo-theme-yun.css" as="style"><link rel="preload" href="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/js/utils.js" as="script"><link rel="preload" href="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"hellsakura.github.io","root":"/","title":"琉的小窝","version":"1.7.0","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/css/hexo-theme-yun.css"><script src="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/js/utils.js"></script><script src="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/js/hexo-theme-yun.js"></script><link rel="alternate" href="/atom.xml" title="琉的小窝" type="application/atom+xml"><meta name="description" content="系统版本：CentOS 7.4 本文的系统命令都是在 root 账号下执行的，假如非 root 账号执行，提示没有权限，可在命令前加 sudo  系统版本：CentOS 7.4 本文的系统命令都是在 root 账号下执行的，假如非 root 账号执行，提示没有权限，可在命令前加sudo 一、更换 yum 源 备份当前源  cd &#x2F;etc&#x2F;yum.repos.d&#x2F; c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Crawlab爬虫Docker部署流程">
+<meta property="og:url" content="https://hellsakura.github.io/2020/02/04/crawlab-docker/index.html">
+<meta property="og:site_name" content="琉的小窝">
+<meta property="og:description" content="系统版本：CentOS 7.4 本文的系统命令都是在 root 账号下执行的，假如非 root 账号执行，提示没有权限，可在命令前加 sudo  系统版本：CentOS 7.4 本文的系统命令都是在 root 账号下执行的，假如非 root 账号执行，提示没有权限，可在命令前加sudo 一、更换 yum 源 备份当前源  cd &#x2F;etc&#x2F;yum.repos.d&#x2F; c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580793806750.jpg">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580794235441.jpg">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580794385803.jpg">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580794502393.jpg">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580795985639.jpg">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580801321843.jpg">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580803627759.jpg">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580803721033.jpg">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580806111415.jpg">
+<meta property="og:image" content="https://hellsakura.github.io/images/2020-02-04/1580808975234.jpg">
+<meta property="article:published_time" content="2020-02-03T17:31:08.000Z">
+<meta property="article:modified_time" content="2020-04-30T08:31:00.000Z">
+<meta property="article:author" content="琉">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="crawlab">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hellsakura.github.io/images/2020-02-04/1580793806750.jpg"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="琉"><img width="96" loading="lazy" src="https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io/images/avatar.jpg" alt="琉"><span class="site-author-status" title="永远相信美好的事情即将发生">😉</span></a><div class="site-author-name"><a href="/about/">琉</a></div><span class="site-name">琉的小窝</span><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">4</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">2</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">8</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1912837889&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/HellSakura" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:hellsakura@hotmail.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://music.163.com/#/user/home?id=126985414" title="网易云音乐" target="_blank" style="color:#C10D0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://space.bilibili.com/589581" title="哔哩哔哩动画" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%9B%B4%E6%8D%A2-yum-%E6%BA%90"><span class="toc-number">1.</span> <span class="toc-text">一、更换 yum 源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85-docker"><span class="toc-number">2.</span> <span class="toc-text">二、安装 docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%AE%89%E8%A3%85-python3"><span class="toc-number">3.</span> <span class="toc-text">三、安装 python3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Crawlab-%E7%9A%84%E5%AE%89%E8%A3%85"><span class="toc-number">4.</span> <span class="toc-text">三、Crawlab 的安装</span></a></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="https://hellsakura.github.io/2020/02/04/crawlab-docker/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="琉"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="琉的小窝"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Crawlab爬虫Docker部署流程</h1><div class="post-meta"><div class="post-time" style="display:block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2020-02-04 01:31:08" itemprop="dateCreated datePublished" datetime="2020-02-04T01:31:08+08:00">2020-02-04</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="修改时间：2020-04-30 16:31:00" itemprop="dateModified" datetime="2020-04-30T16:31:00+08:00">2020-04-30</time></div><span class="post-count"><span class="post-symbolcount"><span class="post-meta-item-icon" title="本文字数"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-file-word-line"></use></svg></span> <span title="本文字数">963</span><span class="post-meta-divider">-</span><span class="post-meta-item-icon" title="阅读时长"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-timer-line"></use></svg></span> <span title="阅读时长">4m</span></span></span><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/linux/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">linux</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/docker/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">docker</span></a><a class="tag-item" href="/tags/crawlab/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">crawlab</span></a><a class="tag-item" href="/tags/python/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">python</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><blockquote>
+<p>系统版本：CentOS 7.4 本文的系统命令都是在 root 账号下执行的，假如非 root 账号执行，提示没有权限，可在命令前加 sudo</p>
+</blockquote>
+<p>系统版本：CentOS 7.4</p>
+<p>本文的系统命令都是在 root 账号下执行的，假如非 root 账号执行，提示没有权限，可在命令前加<code>sudo</code></p>
+<h2 id="一、更换-yum-源"><a href="#一、更换-yum-源" class="headerlink" title="一、更换 yum 源"></a><a href="#%E4%B8%80%E3%80%81%E6%9B%B4%E6%8D%A2yum%E6%BA%90" title="一、更换yum源"></a>一、更换 yum 源</h2><ol>
+<li>备份当前源</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">cd &#x2F;etc&#x2F;yum.repos.d&#x2F;
+cp &#x2F;CentOS-Base.repo &#x2F;CentOS-Base-repo.bak<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<ol start="2">
+<li>下载阿里源 repo 文件</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">wget http:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;repo&#x2F;Centos-7.repo<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="3">
+<li>清理旧包</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum clean all<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="4">
+<li>将阿里源设置为默认源</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">mv Centos-7.repo CentOS-Base.repo<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="5">
+<li>生成阿里源缓存，更新 yum 源</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum makecache
+yum update<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h2 id="二、安装-docker"><a href="#二、安装-docker" class="headerlink" title="二、安装 docker"></a><a href="#%E4%BA%8C%E3%80%81%E5%AE%89%E8%A3%85docker" title="二、安装docker"></a>二、安装 docker</h2><ol>
+<li>安装所需软件包 yum-util</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum -y install yum-utils<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="2">
+<li>设置 yum 源</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum-config-manager --add-repo https:&#x2F;&#x2F;download.docker.com&#x2F;linux&#x2F;centos&#x2F;docker-ce.repo<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="3">
+<li>列出仓库中 docker 版本</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum list docker-ce  --showduplicates |sort -r<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="/images/2020-02-04/1580793806750.jpg" loading="lazy"><br>4. 安装指定版本, 当前 centos 可用为 18.03.1.ce-1.el7.centos</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum install docker-ce-18.03.1.ce-1.el7.centos<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>中途会有二次确认，按 Y 即可<br><img src="/images/2020-02-04/1580794235441.jpg" loading="lazy"><br>安装完成后输入<code>docker version</code>可查看当前版本<br><img src="/images/2020-02-04/1580794385803.jpg" loading="lazy"></p>
+<h2 id="三、安装-python3"><a href="#三、安装-python3" class="headerlink" title="三、安装 python3"></a><a href="#%E4%B8%89%E3%80%81%E5%AE%89%E8%A3%85python3" title="三、安装python3"></a>三、安装 python3</h2><p>CentOS 7 自带 python 版本为 python2.7<br><img src="/images/2020-02-04/1580794502393.jpg" loading="lazy">  </p>
+<ol>
+<li>安装依赖包</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum -y groupinstall &quot;Development tools&quot;
+yum -y install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel gdbm-devel db4-devel libpcap-devel xz-devel<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>python3.7 以上版本，需要额外安装</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum install libffi-devel -y<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="2">
+<li>下载 Python3 安装包 (当前为 3.7.6)</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">wget https:&#x2F;&#x2F;www.python.org&#x2F;ftp&#x2F;python&#x2F;3.7.6&#x2F;Python-3.7.6.tar.xz<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="3">
+<li>新建 python3 存放目录</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">mkdir &#x2F;usr&#x2F;local&#x2F;python3<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="4">
+<li>安装 Python3</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">tar -xvJf  Python-3.7.6.tar.xz
+cd Python-3.7.6
+.&#x2F;configure --prefix&#x3D;&#x2F;usr&#x2F;local&#x2F;python3
+make &amp;&amp; make install<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol start="5">
+<li>创建软链接</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">ln -s &#x2F;usr&#x2F;local&#x2F;python3&#x2F;bin&#x2F;python3 &#x2F;usr&#x2F;bin&#x2F;python3
+ln -s &#x2F;usr&#x2F;local&#x2F;python3&#x2F;bin&#x2F;pip3 &#x2F;usr&#x2F;bin&#x2F;pip3<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<ol start="6">
+<li>查看 python 版本<br><code>python3</code><br><img src="/images/2020-02-04/1580795985639.jpg" loading="lazy"></li>
+</ol>
+<h2 id="三、Crawlab-的安装"><a href="#三、Crawlab-的安装" class="headerlink" title="三、Crawlab 的安装"></a><a href="#%E4%B8%89%E3%80%81Crawlab%E7%9A%84%E5%AE%89%E8%A3%85" title="三、Crawlab的安装"></a>三、Crawlab 的安装</h2><ol>
+<li>更新 yum</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum update<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ol start="2">
+<li>配置 docker 镜像源，提升速度<br>创建 /etc/docker/daemon.json</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">vi &#x2F;etc&#x2F;docker&#x2F;daemon.json<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>按<code>i</code>开启编辑模式，在其中输入如下内容  </p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#123;
+&quot;registry-mirrors&quot;: [&quot;https:&#x2F;&#x2F;registry.docker-cn.com&quot;]
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p><code>:wq</code>保存退出<br>如果保存出错<code>&quot;/etc/docker/daemon.json&quot; E212: Can&#39;t open file for writing</code><br>那么手动创建<code>docker</code>文件夹后再创建<code>daemon.json</code>文件</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">cd &#x2F;etc
+mkdir docker
+cd &#x2F;etc&#x2F;docker
+vim daemon.json<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol start="3">
+<li>下载 Crawlab 镜像<br>启动 docker</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">systemctl start docker<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>下载镜像</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker pull tikazyq&#x2F;crawlab:latest<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="/images/2020-02-04/1580801321843.jpg" loading="lazy"><br>4. 安装 docker-compose<br>下载 Docker Compose 的当前稳定版本</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">curl -L &quot;https:&#x2F;&#x2F;github.com&#x2F;docker&#x2F;compose&#x2F;releases&#x2F;download&#x2F;1.25.3&#x2F;docker-compose-$(uname -s)-$(uname -m)&quot; -o &#x2F;usr&#x2F;local&#x2F;bin&#x2F;docker-compose<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>将可执行权限应用于二进制文件</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">chmod +x &#x2F;usr&#x2F;local&#x2F;bin&#x2F;docker-compose<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>测试安装</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker-compose --version<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="/images/2020-02-04/1580803627759.jpg" loading="lazy"><br>5. 查找 docker-compose.yml 文件位置</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">find &#x2F; -name &quot;docker-compose.yml*&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="/images/2020-02-04/1580803721033.jpg" loading="lazy"></p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">cd &#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay2&#x2F;XXXX&#x2F;diff&#x2F;app&#x2F;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>此处<code>XXXX</code>替换为你的路径<br>6. 配置 docker-compose.yml 文件<br>参考<a target="_blank" rel="noopener" href="https://docs.crawlab.cn/Installation/Docker.html">官方文档</a><br>7. 启动 Crawlab</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker-compose up -d   #默认为守护进程模式，容器以后台方式运行<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>第一次启动会下载安装数据库 Redis 和 Mongodb<br><img src="/images/2020-02-04/1580806111415.jpg" loading="lazy"><br>8. 访问 Crawlab<br>在浏览器中输入 <code>http://你的ip:8080</code>即可看到 Crawlab 界面<br>⚠️在服务器防火墙放行 8080 端口<br><img src="/images/2020-02-04/1580808975234.jpg" loading="lazy"><br>9. 再启动<br>更新后</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"># 关闭并删除 Docker 容器
+docker-compose down
+
+# 拉取最新镜像
+docker pull tikazyq&#x2F;crawlab:latest
+
+# 启动 Docker 容器
+docker-compose up -d<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>重启后<br>查找 docker-compose.yml 文件位置<br>cd 到 docker-compose.yml 所在文件目录下<br>启动</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker-compose up -d<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>参考文档：<br>1.<a target="_blank" rel="noopener" href="https://blog.csdn.net/kai402458953/article/details/100035672">https://blog.csdn.net/kai402458953/article/details/100035672</a><br>2.<a target="_blank" rel="noopener" href="https://blog.csdn.net/kai402458953/article/details/100026109">https://blog.csdn.net/kai402458953/article/details/100026109</a><br>3.<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/277141716">https://www.zhihu.com/question/277141716</a><br>官方文档:<br><a target="_blank" rel="noopener" href="https://docs.crawlab.cn/Installation/Docker.html">https://docs.crawlab.cn/Installation/Docker.html</a><br>项目地址：<br><a target="_blank" rel="noopener" href="https://github.com/crawlab-team/crawlab">https://github.com/crawlab-team/crawlab</a></p>
+</div></section><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-hand-coin-line"></use></svg></span><div id="reward-comment">I'm so cute. Please give me money.</div><div id="qr" style="display:none;"><div style="display:inline-block"><a href="/images/pay/alipay.png"><img loading="lazy" src="/images/pay/alipay.png" alt="支付宝" title="支付宝"></a><div><span style="color:#00A3EE"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-alipay-line"></use></svg></span></div></div><div style="display:inline-block"><a href="/images/pay/wechat.png"><img loading="lazy" src="/images/pay/wechat.png" alt="微信支付" title="微信支付"></a><div><span style="color:#2DC100"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-wechat-pay-line"></use></svg></span></div></div></div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>琉</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://hellsakura.github.io/2020/02/04/crawlab-docker/" title="Crawlab爬虫Docker部署流程">https://hellsakura.github.io/2020/02/04/crawlab-docker/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/2020/02/04/nodejs-install-centos7/" rel="prev" title="CentOS7中nodejs的安装"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">CentOS7中nodejs的安装</span></a></div><div class="post-nav-item"></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>要不要和我说些什么？</span><br></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 琉</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v6.0.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.7.0</span></div><div class="live-time"><span>本博客已萌萌哒地运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  setTimeout(blog_live_time, 1000);
+  const start = new Date('2019-12-12T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = ` ${passDay} 天 ${passHour} 小时 ${passMinute} 分 ${passSecond} 秒`;
+}
+blog_live_time();
+</script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div></body></html>
