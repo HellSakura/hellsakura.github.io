@@ -9,8 +9,8 @@ categories:
   - linux
 ---
 > 若使用 yum install nodejs npm -y 安装，安装后的 nodejs 版本为 6.17.1，版本低，部分应用运行会报错。
+<!--more-->
 
-若使用`yum install nodejs npm -y`安装，安装后的 nodejs 版本为 6.17.1，版本低，部分应用运行会报错。  
 
 如果已经使用`yum install nodejs npm -y`安装，则需要先卸载当前 nodejs
 

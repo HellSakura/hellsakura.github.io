@@ -1,12 +1,14 @@
 ---
 title: 基于Arduino mini pro的蓝牙遥控小车制作（使用joystick控制）
-date: 2020-08-05 02:31:08
+date: 2021-03-05 02:31:08
 updated: 2021-03-30 17:31:00
 tags:
   - Arduino
 categories:
   - Arduino
 ---
+蓝牙遥控小车,基于Arduino mini pro，使用摇杆控制
+<!--more-->
 # 1、所需工具及组件
 ## 1.1工具列表
 
@@ -52,14 +54,14 @@ categories:
 - [ ] 外部引脚通孔焊接（需自行焊接）
 - [ ] 直接下载程序（需自备USB转TTL串口线）
 #### 示意图
-![pro mini.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596521044341-37e4e6b6-5456-4664-97af-2b2ae288998d.jpeg)
+![pro mini.jpg](/images/2021/03/05/1.jpeg)
 买到的pro mini 应该是这种样子的，需要自行焊接
 
 
 #### I/O图
 
 
-![IO图.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596521514866-5cb1b769-9ff9-430f-b3ea-ac01513e97b7.png)
+![IO图.png](/images/2021/03/05/2.png)
 **串行：0（RX）和1（TX）** 用于接收（RX）和发送（TX）TTL串行数据。**（一定要将其他设备的RXD、TXD分别接在pro mini 的TXD、RXD接口上，即发送对接收）**  
 
 **PWM:** 3、5、6、9、10和11。 提供带[AnalogWrite](https://www.arduino.cc/en/Main/Reference/AnalogWrite) 功能的8位PWM输出。   
@@ -78,7 +80,7 @@ categories:
 
 ### 1.3.2 L298N电机驱动模块
 #### 示意图
-![L298N.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596523020022-25ad460f-2160-40b7-8b65-ecaef79a9be6.jpeg)
+![L298N.jpg](/images/2021/03/05/3.jpeg)
 #### 跳线帽使用说明
 可以看到有3个跳线帽
 **板载5V使能**、**通道A使能**和**通道B使能**
@@ -95,7 +97,8 @@ categories:
 ### 1.3.3 HC-05蓝牙模块
 网上售卖的分为兼容版和原装版两种，区别不是很大，我买的时候买了一个兼容板和原装板
 #### 示意图
-![HC-05兼容.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596524656323-a70da355-9e86-4b4d-849c-d8ae2f59b090.jpeg)![HC-05原装.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596524662292-0abb2c82-9244-4bee-85c9-859f30a5cdc7.jpeg)
+![HC-05兼容.jpg](/images/2021/03/05/4.jpeg)  
+![HC-05原装.jpg](/images/2021/03/05/5.jpeg)
 #### 接线方法
 | USB转TTL | HC-05 |
 | --- | --- |
@@ -107,12 +110,12 @@ categories:
 注意：我这里兼容版是按照表格里的接线方法接线的，使用正常。使用原装版时，按照此方法电脑提示设备运转不正常，将USB转TTL的 VCC 对应了HC-05上的 VCC后，运作正常
 ### 1.3.4 USB转TTL CH340G模块
 #### 示意图
-![USB转TTL.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596600833902-2407ce75-94dd-4398-b409-27f663710b18.jpeg)
+![USB转TTL.jpg](/images/2021/03/05/6.jpeg)
 #### 驱动
 [CH341SER.ZIP](https://www.yuque.com/attachments/yuque/0/2020/zip/1370978/1596600916222-522166a5-306e-45a3-9acb-4ebfe147a5c0.zip?_lake_card=%7B%22uid%22%3A%221596600915956-0%22%2C%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2020%2Fzip%2F1370978%2F1596600916222-522166a5-306e-45a3-9acb-4ebfe147a5c0.zip%22%2C%22name%22%3A%22CH341SER.ZIP%22%2C%22size%22%3A202935%2C%22type%22%3A%22application%2Fx-zip-compressed%22%2C%22ext%22%3A%22zip%22%2C%22progress%22%3A%7B%22percent%22%3A99%7D%2C%22status%22%3A%22done%22%2C%22percent%22%3A0%2C%22id%22%3A%22jwf2P%22%2C%22card%22%3A%22file%22%7D)
 ### 1.3.5 JoyStick模块
 #### 示意图
-![joystick.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596525111954-9fb7e84b-b33e-46c6-9748-7027c8a6554b.jpeg)
+![joystick.jpg](/images/2021/03/05/7.jpeg)
 #### 测试方法 (X接A0 Y接A1)
 ```c
 #define joyX A0
@@ -139,13 +142,14 @@ void loop(void)
 }
 ```
 打开串口监视器      可以看到随着摇杆的运动，数据在不断变换
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596526043757-d1569f27-1a1a-4261-acff-6bdb78d1cfc2.png)![image.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596526210268-045e82e5-672b-4919-96c8-a69bc3991b4e.png)
+![image.png](/images/2021/03/05/8.png)  
+![image.png](/images/2021/03/05/9.png)
 默认的位置在 513,525 左右，这是中间位置（不同摇杆这个数值可能不同）。
 其值介于0到1023之间
 ### 1.3.6 小车底盘
 将零件自行组装
-![车1.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596526709471-4d7fbd00-58cc-4809-a02d-5baff663e8d7.jpeg)
-![车2.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596526713065-6da052b2-9996-4787-9ca5-3d4d5385bb6b.jpeg)
+![车1.jpg](/images/2021/03/05/10.jpeg)
+![车2.jpg](/images/2021/03/05/11.jpeg)
 请根据体感自行调整导柱长度，我的下方2个万向轮处给的8根导柱过长，导致小车不能直行，于是手动将其磨短了4mm左右。
 
 
@@ -291,12 +295,12 @@ void loop() {
 [驱动及测试工具.zip](https://www.yuque.com/attachments/yuque/0/2020/zip/1370978/1596595432493-03932491-976e-40f1-b40e-1f4fcd6ef151.zip?_lake_card=%7B%22uid%22%3A%221596595428917-0%22%2C%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2020%2Fzip%2F1370978%2F1596595432493-03932491-976e-40f1-b40e-1f4fcd6ef151.zip%22%2C%22name%22%3A%22%E9%A9%B1%E5%8A%A8%E5%8F%8A%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7.zip%22%2C%22size%22%3A4525096%2C%22type%22%3A%22application%2Fx-zip-compressed%22%2C%22ext%22%3A%22zip%22%2C%22progress%22%3A%7B%22percent%22%3A99%7D%2C%22status%22%3A%22done%22%2C%22percent%22%3A0%2C%22id%22%3A%22qoqha%22%2C%22card%22%3A%22file%22%7D)
 
 1. 安装HC-05的驱动
-1. 将蓝牙模块按照[接线图](https://www.yuque.com/hellsakura/utwbog/ct4wiz#xZOy7)与USB转TTL连接（[USB转TTL驱动](https://www.yuque.com/hellsakura/utwbog/ct4wiz#Wp3IT)）
+1. 将蓝牙模块按照[接线图](#3、电路连接)与USB转TTL连接（[USB转TTL驱动](#驱动)）
 1. 按住蓝牙模块上的小按钮，连接电脑，如果蓝牙模块指示灯大约每2秒闪烁一次，则表明我们已成功进入AT命令模式
-1. 打开蓝牙测试软件，点击搜索端口，波特率38400，稍等一会就会显示端口（这里的端口可以在设备管理器查看，选择CH340对应的端口）![image.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596596627165-9b1184e5-6518-477e-896c-15beea5b6bf6.png)
+1. 打开蓝牙测试软件，点击搜索端口，波特率38400，稍等一会就会显示端口（这里的端口可以在设备管理器查看，选择CH340对应的端口）![image.png](/images/2021/03/05/12.png)
 1. 输入 AT 后敲一下回车，再点击发送命令，会回复 OK 代表我们已经在AT模式下了
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596596841456-fd895008-da33-40f6-a4bb-265c79b73dff.png)
+![image.png](/images/2021/03/05/13.png)
 
 6. 首先，我们需要将两个蓝牙模块的串口波特率更改为38400，出厂时自带应该是9600，然后记下你要作为从机的蓝牙模块的地址
 
@@ -359,21 +363,21 @@ OK
 2. 点击上传按钮，在下方状态栏从编译项目变成上传中，马上按下pro mini 上的红色复位键，这里要多次尝试确认时机，就会提示上传完成，这时程序就写入了pro mini 中了
 2. 依次将小车和遥控器程序分别上传到两块pro mini 中
 
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596602106085-6b5d4765-1955-4818-8bda-edb1c06779b9.png)
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596602302217-4201c31e-0e45-4cdc-8490-72a2f872838e.png)
-![image.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596602316013-3cbd2e5f-ee59-47c3-9a78-396c12e691e7.png)
+![image.png](/images/2021/03/05/14.png)
+![image.png](/images/2021/03/05/15.png)
+![image.png](/images/2021/03/05/16.png)
 # 3、电路连接
 ## 3.1小车接线图
-![小车接线图.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596544483446-7e35d396-a95b-4088-a807-d8701374d44b.png\)
+![小车接线图.png](/images/2021/03/05/17.png)
 
 
 [小车接线图.pdf](https://www.yuque.com/attachments/yuque/0/2020/pdf/1370978/1596544534776-77141d11-35e4-4068-bfbe-ab23bfdbb2ee.pdf?_lake_card=%7B%22uid%22%3A%221596544532721-0%22%2C%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2020%2Fpdf%2F1370978%2F1596544534776-77141d11-35e4-4068-bfbe-ab23bfdbb2ee.pdf%22%2C%22name%22%3A%22%E5%B0%8F%E8%BD%A6%E6%8E%A5%E7%BA%BF%E5%9B%BE.pdf%22%2C%22size%22%3A713888%2C%22type%22%3A%22application%2Fpdf%22%2C%22ext%22%3A%22pdf%22%2C%22progress%22%3A%7B%22percent%22%3A99%7D%2C%22status%22%3A%22done%22%2C%22percent%22%3A0%2C%22id%22%3A%225o3vh%22%2C%22card%22%3A%22file%22%7D)
 ## 3.2遥控器接线图
-![遥控器_bb.png](https://cdn.nlark.com/yuque/0/2020/png/1370978/1596551379833-70455da8-7044-4a9a-bbe0-a0a0126f0e3c.png\)
+![遥控器_bb.png](/images/2021/03/05/18.png)
 [遥控器.pdf](https://www.yuque.com/attachments/yuque/0/2020/pdf/1370978/1596551583499-d7d64699-e098-404c-9f61-39b76eb2ad17.pdf?_lake_card=%7B%22uid%22%3A%221596551581102-0%22%2C%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2020%2Fpdf%2F1370978%2F1596551583499-d7d64699-e098-404c-9f61-39b76eb2ad17.pdf%22%2C%22name%22%3A%22%E9%81%A5%E6%8E%A7%E5%99%A8.pdf%22%2C%22size%22%3A837468%2C%22type%22%3A%22application%2Fpdf%22%2C%22ext%22%3A%22pdf%22%2C%22progress%22%3A%7B%22percent%22%3A99%7D%2C%22status%22%3A%22done%22%2C%22percent%22%3A0%2C%22id%22%3A%22ewMJs%22%2C%22card%22%3A%22file%22%7D)
 # 4、安装
-![成品1.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596602693626-94eb0a4c-777c-47a7-879e-39bc55e4f653.jpeg)
-![成品2.jpg](https://cdn.nlark.com/yuque/0/2020/jpeg/1370978/1596602964580-a829e15c-1999-49cc-a284-a332c0e737d2.jpeg)
+![成品1.jpg](/images/2021/03/05/19.jpeg)
+![成品2.jpg](/images/2021/03/05/20.jpeg)
 
 <div class="info">
 
