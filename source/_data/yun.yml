@@ -1,0 +1,116 @@
+mode: auto
+
+banner:
+  enable: true
+  title: 琉的小窝
+  src: /js/ui/banner.js
+  border: true
+  cloud:
+    enable: true
+    color: "white"
+  go_down:
+    enable: true
+    icon: icon-arrow-down-s-line
+
+colors:
+  primary: "#0078E7"
+  bg: "#f5f5f5"
+  selection_bg: "#8e71c1"
+  tag_start_color: "#999999"
+  tag_end_color: "#0078E7"
+  dark:
+    block: "#1b1f2e"
+
+avatar:
+  enable: true
+  url: /images/avatar.jpg
+  status:
+    enable: true
+    emoji: 😉
+    message: 永远相信美好的事情即将发生
+
+pages:
+
+codeblock:
+  copy_btn: true
+  prismjs:
+    light: default
+    dark: tomorrow
+
+cdn:
+  pre: "https://cdn.jsdelivr.net/gh/HellSakura/hellsakura.github.io"
+  # pre: https://cdn.jsdelivr.net/gh/YunYouJun/yunyoujun.github.io
+  css:
+    yun-markdown-css: https://cdn.jsdelivr.net/npm/star-markdown-css@0.2.2/dist/yun/yun-markdown.min.css
+    # github-markdown-css: https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.css
+  js:
+    base:
+    async:
+      iconfont: //at.alicdn.com/t/font_1140697_dxory92pb0h.js
+    defer: 
+
+reward:
+  enable: true
+  icon: icon-hand-coin-line
+  comment: I'm so cute. Please give me money.
+  # url: https://github.com/YunYouJun/yunyoujun.github.io/issues/96
+  methods:
+    - name: 支付宝
+      path: /images/pay/alipay.png
+      color: "#00A3EE"
+      icon: icon-alipay-line
+    - name: 微信支付
+      path: /images/pay/wechat.png
+      color: "#2DC100"
+      icon: icon-wechat-pay-line
+
+wordcloud:
+  enable: true
+
+footer:
+  live_time:
+    enable: true
+    prefix: 本博客已萌萌哒地运行
+    suffix: (●'◡'●)
+    start_time: "2019-12-12T00:00:00"
+
+wordcount:
+  enable: true
+  count: true
+  time: true
+
+social:
+  - name: RSS
+    # set rss in your root config
+    # https://github.com/hexojs/hexo-generator-feed
+    link: /atom.xml # config.feed.path
+    icon: icon-rss-line
+    color: orange
+  - name: QQ
+    # https://isux.tencent.com/wp-content/uploads/2016/05/20160512101222609.pdf
+    link: https://wpa.qq.com/msgrd?v=3&uin=1912837889&site=qq&menu=yes
+    icon: icon-qq-line
+    color: "#12B7F5"
+  - name: GitHub
+    link: https://github.com/HellSakura
+    icon: icon-github-line
+    color: "#181717"
+  - name: E-Mail
+    link: mailto:hellsakura@hotmail.com
+    icon: icon-mail-line
+    color: "#8E71C1"
+  - name: 网易云音乐
+    link: https://music.163.com/#/user/home?id=126985414
+    icon: icon-netease-cloud-music-line
+    color: "#C10D0C"
+  - name: 哔哩哔哩动画
+    link: https://space.bilibili.com/589581
+    icon: icon-bilibili-line
+    color: "#FF8EB3"
+
+
+cursor:
+  enable: true
+  default: https://cdn.jsdelivr.net/gh/YunYouJun/cdn/css/md-cursors/pointer.cur
+  pointer: https://cdn.jsdelivr.net/gh/YunYouJun/cdn/css/md-cursors/link.cur
+  text: https://cdn.jsdelivr.net/gh/YunYouJun/cdn/css/md-cursors/text.cur
